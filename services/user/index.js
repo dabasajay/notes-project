@@ -34,7 +34,7 @@ router.post('/', async (req, res, next) => {
     })
     .catch((err) => {
       res.status(500).json({
-        status: 'error occurred',
+        status: err.message ? err.message : 'error occured!',
       });
     });
 });
@@ -65,6 +65,9 @@ router.post('/auth', (req, res, next) => {
       });
     })
     .then((user) => {
+      if (user == null) {
+        throw new Error('User not found');
+      }
       const { dataValues: userData } = user;
       res.status(500).json({
         status: 'success',
@@ -73,7 +76,7 @@ router.post('/auth', (req, res, next) => {
     })
     .catch((err) => {
       res.status(500).json({
-        status: 'error occurred while finding the user!',
+        status: err.message ? err.message : 'error occured!',
       });
     });
 });

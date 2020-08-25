@@ -20,22 +20,27 @@ router.get('/list', (req, res, next) => {
     .then(() => {
       return User.findByPk(userId);
     })
-    .then(() => {
+    .then((user) => {
+      if (user == null) {
+        throw new Error('User not found');
+      }
+      return user;
+    })
+    .then((user) => {
       return Notes.findAll({
         where: {
-          userId: userId,
+          userId: user.id,
         },
       });
     })
     .then((notes) => {
-      console.log(notes);
       res.status(200).json({
         notes: notes,
       });
     })
     .catch((err) => {
       res.status(500).json({
-        status: 'error occurred',
+        status: err.message ? err.message : 'error occured!',
       });
     });
 });
@@ -62,6 +67,11 @@ router.post('/', (req, res, next) => {
     .then(() => {
       return User.findByPk(userId);
     })
+    .then((user) => {
+      if (user == null) {
+        throw new Error('User not found');
+      }
+    })
     .then(() => {
       return Notes.create(notesData);
     })
@@ -72,7 +82,7 @@ router.post('/', (req, res, next) => {
     })
     .catch((err) => {
       res.status(500).json({
-        status: 'error occurred',
+        status: err.message ? err.message : 'error occured!',
       });
     });
 });
