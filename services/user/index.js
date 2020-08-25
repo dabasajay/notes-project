@@ -22,22 +22,22 @@ router.post('/', async (req, res, next) => {
     username: req.body.username,
     password: req.body.password,
   };
-  sequelize.sync()
+  sequelize
+    .sync()
     .then(() => {
       return User.create(userData);
     })
-    .then(user => {
+    .then((user) => {
       res.status(200).json({
-        status: 'account created'
+        status: 'account created',
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).json({
-        status: 'error occurred'
+        status: 'error occurred',
       });
-    })
+    });
 });
-
 
 /*
     @route : `POST` `/app/user/auth`
@@ -57,24 +57,25 @@ router.post('/auth', (req, res, next) => {
     username: req.body.username,
     password: req.body.password,
   };
-  sequelize.sync()
+  sequelize
+    .sync()
     .then(() => {
       return User.findOne({
-        where: loginFields
+        where: loginFields,
       });
     })
-    .then(user => {
+    .then((user) => {
       const { dataValues: userData } = user;
       res.status(500).json({
         status: 'success',
-        userId: userData.id
+        userId: userData.id,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).json({
-        status: 'error occurred while finding the user!'
+        status: 'error occurred while finding the user!',
       });
-    })
+    });
 });
 
 module.exports = router;

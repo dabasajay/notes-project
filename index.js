@@ -42,15 +42,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
   Database connection
 */
 
-sequelize.authenticate()
+sequelize
+  .authenticate()
   .then(() => {
-		console.log('Connected to database!');
+    console.log('Connected to database!');
   })
-  .catch(err => {
-		console.log('Unable to connect to the database:');
-		console.log(err.message);
-		process.exit(1);
-  })
+  .catch((err) => {
+    console.log('Unable to connect to the database:');
+    console.log(err.message);
+    process.exit(1);
+  });
 
 /*
  *API Routes

@@ -15,30 +15,30 @@ const User = models.users;
 
 router.get('/list', (req, res, next) => {
   const userId = parseInt(req.query.user, 10);
-  sequelize.sync()
+  sequelize
+    .sync()
     .then(() => {
       return User.findByPk(userId);
     })
     .then(() => {
       return Notes.findAll({
         where: {
-          userId: userId
-        }
+          userId: userId,
+        },
       });
     })
-    .then(notes => {
+    .then((notes) => {
       console.log(notes);
       res.status(200).json({
-        notes: notes
+        notes: notes,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).json({
-        status: 'error occurred'
+        status: 'error occurred',
       });
-    })
+    });
 });
-
 
 /*
     @route : `POST` `/app/sites?user={userId}`
@@ -55,25 +55,26 @@ router.post('/', (req, res, next) => {
   const userId = parseInt(req.query.user, 10);
   const notesData = {
     note: req.body.note,
-    userId: userId
+    userId: userId,
   };
-  sequelize.sync()
+  sequelize
+    .sync()
     .then(() => {
       return User.findByPk(userId);
     })
     .then(() => {
       return Notes.create(notesData);
     })
-    .then(note => {
+    .then((note) => {
       res.status(200).json({
-        status: 'success'
+        status: 'success',
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).json({
-        status: 'error occurred'
+        status: 'error occurred',
       });
-    })
+    });
 });
 
 module.exports = router;
