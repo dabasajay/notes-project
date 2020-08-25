@@ -3,6 +3,7 @@ const express = require('express'),
 
 const sequelize = require('../../sequelize');
 const { models } = require('../../sequelize');
+const isValid = require('../../utils/isValid');
 const Notes = models.notes;
 const User = models.users;
 
@@ -14,7 +15,18 @@ const User = models.users;
 */
 
 router.get('/list', (req, res, next) => {
-  const userId = parseInt(req.query.user, 10);
+  const { user } = req.query;
+  if (!isValid(user)) {
+    return res.status(400).json({
+      status: 'Bad request: invalid data',
+    });
+  }
+  const userId = parseInt(user, 10);
+  if (isNaN(userId)) {
+    return res.status(400).json({
+      status: 'Bad request: invalid user id',
+    });
+  }
   sequelize
     .sync()
     .then(() => {
@@ -57,10 +69,22 @@ router.get('/list', (req, res, next) => {
 */
 
 router.post('/', (req, res, next) => {
-  const userId = parseInt(req.query.user, 10);
+  const { user } = req.query;
+  const { note } = req.body;
+  if (!isValid(user) || !isValid(note)) {
+    return res.status(400).json({
+      status: 'Bad request: invalid data',
+    });
+  }
+  const userId = parseInt(user, 10);
+  if (isNaN(userId)) {
+    return res.status(400).json({
+      status: 'Bad request: invalid user id',
+    });
+  }
   const notesData = {
-    note: req.body.note,
-    userId: userId,
+    note,
+    userId,
   };
   sequelize
     .sync()
@@ -75,7 +99,7 @@ router.post('/', (req, res, next) => {
     .then(() => {
       return Notes.create(notesData);
     })
-    .then((note) => {
+    .then(() => {
       res.status(200).json({
         status: 'success',
       });

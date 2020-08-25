@@ -3,6 +3,7 @@ const express = require('express'),
 
 const sequelize = require('../../sequelize');
 const { models } = require('../../sequelize');
+const isValid = require('../../utils/isValid');
 const User = models.users;
 
 /*
@@ -18,9 +19,15 @@ const User = models.users;
 */
 
 router.post('/', async (req, res, next) => {
+  const { username, password } = req.body;
+  if (!isValid(username) || !isValid(password)) {
+    return res.status(400).json({
+      status: 'Bad request: invalid data',
+    });
+  }
   const userData = {
-    username: req.body.username,
-    password: req.body.password,
+    username,
+    password,
   };
   sequelize
     .sync()
@@ -53,9 +60,15 @@ router.post('/', async (req, res, next) => {
 */
 
 router.post('/auth', (req, res, next) => {
+  const { username, password } = req.body;
+  if (!isValid(username) || !isValid(password)) {
+    return res.status(400).json({
+      status: 'Bad request: invalid data',
+    });
+  }
   const loginFields = {
-    username: req.body.username,
-    password: req.body.password,
+    username,
+    password,
   };
   sequelize
     .sync()
